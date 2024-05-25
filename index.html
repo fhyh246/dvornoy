@@ -20,34 +20,48 @@
     <button onclick="generateReport('Отчет по кассе')">Формировать отчет</button>
     <input type="text" id="inkassation" placeholder="Инкассация">
     <button onclick="closeShift()">Закрыть смену</button>
-    <ul id="reportList"></ul>
+    <div id="cashReport">
+      <h3>Отчет по кассе</h3>
+      <ul id="cashReportList"></ul>
+    </div>
+    <div id="nonCashReport" style="display: none;">
+      <h3>Отчет не по кассе</h3>
+      <ul id="nonCashReportList"></ul>
+    </div>
   </div>
-  
-  <script>
-    function openShift() {
-      var shop = prompt("Введите магазин:");
-      var fio = prompt("Введите ФИО:");
-      var date = prompt("Введите дату:");
-      var salary = prompt("Введите зарплату:");
-      // Дополнительная логика для открытия смены
-      document.getElementById("mainScreen").style.display = "block";
-    }
-    
-    function generateReport(reportType) {
-      // Логика формирования отчета
-      if (reportType === 'Отчет по кассе') {
-        // Логика для отчета по кассе
-      } else {
-        // Логика для отчета не по кассе
-      }
-    }
-    
-    function closeShift() {
-      var inkassation = prompt("Введите инкассацию:");
-      // Логика закрытия смены
-    }
-  </script>
 </div>
+
+<script>
+  function openShift() {
+    var shop = prompt("Введите магазин:");
+    var fio = prompt("Введите ФИО:");
+    var date = prompt("Введите дату:");
+    var salary = prompt("Введите зарплату:");
+    // Дополнительная логика для открытия смены
+    document.getElementById("mainScreen").style.display = "block";
+  }
+
+  function generateReport(reportType) {
+    if (reportType === 'Отчет по кассе') {
+      var productName = prompt("Введите название товара:");
+      var quantity = parseInt(prompt("Введите количество товара:"));
+      var price = parseFloat(prompt("Введите цену товара:"));
+      var paymentMethod = prompt("Выберите метод оплаты (наличные/безналичные):");
+      var total = quantity * price;
+      var reportList = document.getElementById("cashReportList");
+      var listItem = document.createElement("li");
+      listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
+      reportList.appendChild(listItem);
+    } else {
+      // Логика для отчета не по кассе
+    }
+  }
+
+  function closeShift() {
+    var inkassation = prompt("Введите инкассацию:");
+    // Логика закрытия смены
+  }
+</script>
 
 </body>
 </html>
