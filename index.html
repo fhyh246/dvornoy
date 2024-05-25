@@ -1,124 +1,53 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор отчета по кассе</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Отчет</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Генератор отчета по кассе</h1>
-        <div id="startShiftForm">
-            <label for="fullName">ФИО:</label>
-            <input type="text" id="fullName" placeholder="Введите ФИО"><br>
-            <label for="shiftDate">Дата:</label>
-            <input type="date" id="shiftDate"><br>
-            <button id="startShiftButton">Открыть смену</button>
-        </div>
-        <div id="transactionForm" style="display:none;">
-            <label for="product">Товар:</label>
-            <input type="text" id="product"><br>
-            <label for="amount">Сумма:</label>
-            <input type="number" id="amount"><br>
-            <label for="quantity">Количество:</label>
-            <input type="number" id="quantity"><br>
-            <button id="transferButton">Перевод</button>
-            <button id="cashButton">Наличные</button>
-            <button id="generateReportButton">Формировать отчет</button>
-        </div>
-        <div id="reportOutput">
-            <h2>Отчет по кассе:</h2>
-            <p id="cashAmount">Сумма наличных: 0</p>
-            <p id="nonCashAmount">Сумма безналичных: 0</p>
-            <p id="totalRevenue">Общая выручка: 0</p>
-            <div id="transactions">
-                <h2>Транзакции:</h2>
-                <ul id="transactionList"></ul>
-            </div>
-        </div>
-    </div>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-    let fullName = "";
-    let shiftDate = "";
 
-    const startShiftForm = document.getElementById("startShiftForm");
-    const transactionForm = document.getElementById("transactionForm");
-    const fullNameInput = document.getElementById("fullName");
-    const shiftDateInput = document.getElementById("shiftDate");
-    const startShiftButton = document.getElementById("startShiftButton");
-    const transferButton = document.getElementById("transferButton");
-    const cashButton = document.getElementById("cashButton");
-    const generateReportButton = document.getElementById("generateReportButton");
-    const reportOutput = document.getElementById("reportOutput");
-    const transactionList = document.getElementById("transactionList");
-    const productsSold = [];
-    let cashAmount = 0;
-    let nonCashAmount = 0;
+<button onclick="openShift()">Открыть смену</button>
 
-    startShiftButton.addEventListener("click", function() {
-        fullName = fullNameInput.value.trim();
-        shiftDate = shiftDateInput.value.trim();
-        if (fullName === "" || shiftDate === "") {
-            alert("Please enter your full name and date.");
-            return;
-        }
-        startShiftForm.style.display = "none";
-        transactionForm.style.display = "block";
-    });
-
-    transferButton.addEventListener("click", function() {
-        const product = document.getElementById("product").value;
-        const amount = parseFloat(document.getElementById("amount").value);
-        const quantity = parseInt(document.getElementById("quantity").value);
-
-        if (isNaN(amount) || isNaN(quantity)) {
-            alert("Please enter the amount and quantity correctly.");
-            return;
-        }
-
-        const totalAmount = amount * quantity;
-        nonCashAmount += totalAmount;
-
-        updateReport();
-        addTransaction(product, totalAmount);
-    });
-
-    cashButton.addEventListener("click", function() {
-        const product = prompt("Enter the product name:");
-        const amount = parseFloat(prompt("Enter the cash amount:"));
-        const quantity = parseInt(prompt("Enter the quantity:"));
-
-        if (isNaN(amount) || isNaN(quantity)) {
-            alert("Please enter the amount and quantity correctly.");
-            return;
-        }
-
-        cashAmount += amount;
-        updateReport();
-        addTransaction(product, amount * quantity);
-    });
-
-    generateReportButton.addEventListener("click", function() {
-        fullNameInput.value = fullName;
-        shiftDateInput.value = shiftDate;
-    });
-
-    function updateReport() {
-        const totalRevenue = cashAmount + nonCashAmount;
-        document.getElementById("cashAmount").textContent = `Cash amount: ${cashAmount}`;
-        document.getElementById("nonCashAmount").textContent = `Non-cash amount: ${nonCashAmount}`;
-        document.getElementById("totalRevenue").textContent = `Total revenue: ${totalRevenue}`;
+<div id="mainScreen" style="display: none;">
+  <div>
+    <button onclick="generateReport('Отчет по кассе')">Отчет по кассе</button>
+    <button onclick="generateReport('Не по кассе')">Не по кассе</button>
+  </div>
+  
+  <div id="reportSection">
+    <input type="text" id="dopZP" placeholder="ДОП-ЗП">
+    <button onclick="generateReport('Отчет по кассе')">Формировать отчет</button>
+    <input type="text" id="inkassation" placeholder="Инкассация">
+    <button onclick="closeShift()">Закрыть смену</button>
+    <ul id="reportList"></ul>
+  </div>
+  
+  <script>
+    function openShift() {
+      var shop = prompt("Введите магазин:");
+      var fio = prompt("Введите ФИО:");
+      var date = prompt("Введите дату:");
+      var salary = prompt("Введите зарплату:");
+      // Дополнительная логика для открытия смены
+      document.getElementById("mainScreen").style.display = "block";
     }
-
-    function addTransaction(product, amount) {
-        productsSold.push({ product, amount });
-        const listItem = document.createElement("li");
-        listItem.textContent = `${product}: ${amount}`;
-        transactionList.appendChild(listItem);
+    
+    function generateReport(reportType) {
+      // Логика формирования отчета
+      if (reportType === 'Отчет по кассе') {
+        // Логика для отчета по кассе
+      } else {
+        // Логика для отчета не по кассе
+      }
     }
-});
-    </script>
+    
+    function closeShift() {
+      var inkassation = prompt("Введите инкассацию:");
+      // Логика закрытия смены
+    }
+  </script>
+</div>
+
 </body>
 </html>
