@@ -178,4 +178,61 @@
     var dopZP = document.getElementById("dopZP").value || "0";
     var inkassation = document.getElementById("inkassation").value || "0";
     var cashReportItems = document.getElementById("cashReportList").getElementsByTagName("li");
-    var nonCashReportItems =
+    var nonCashReportItems = document.getElementById("nonCashReportList").getElementsByTagName("li");
+    var totalCash = 0;
+    var totalNonCash = 0;
+
+    for (var i = 0; i < cashReportItems.length; i++) {
+      var itemText = cashReportItems[i].textContent;
+      var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
+      if (itemText.includes("наличные")) {
+        totalCash += amount;
+      }
+    }
+
+    for (var j = 0; j < nonCashReportItems.length; j++) {
+      var itemText = nonCashReportItems[j].textContent;
+      var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
+      if (itemText.includes("наличные")) {
+        totalNonCash += amount;
+      }
+    }
+
+    var totalRevenue = totalCash + totalNonCash;
+    var totalCashReport = `
+❗️Магазин: ${shop}
+ФИО: ${fio}
+Дата: ${date}
+
+Зп: ${salary}
+Доп. зп: ${dopZP}
+
+Отчет по кассе:
+Нал: ${totalCash.toFixed(2)}
+Бн: 0
+Общая: ${totalCash.toFixed(2)}
+Скидки: -
+Браки: -
+Списания: -
+Сдано: ${totalCash.toFixed(2)}
+
+❗️Не по кассе:
+Нал: ${totalNonCash.toFixed(2)}
+Бн: 0
+Общая: ${totalNonCash.toFixed(2)}
+Скидки: -
+Браки: -
+Списание: -
+Сдано: ${totalNonCash.toFixed(2)}
+
+Инкассация: ${inkassation}
+Общая выручка смены: ${totalRevenue.toFixed(2)}
+Сдано в общем: ${(totalCash + totalNonCash).toFixed(2)}
+`;
+
+    alert(totalCashReport);
+  }
+</script>
+
+</body>
+</html>
