@@ -1,259 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Двор</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
+document.addEventListener("DOMContentLoaded", function() {
+    let fullName = "";
+    let shiftDate = "";
+
+    const startShiftForm = document.getElementById("startShiftForm");
+    const transactionForm = document.getElementById("transactionForm");
+    const fullNameInput = document.getElementById("fullName");
+    const shiftDateInput = document.getElementById("shiftDate");
+    const startShiftButton = document.getElementById("startShiftButton");
+    const transferButton = document.getElementById("transferButton");
+    const cashButton = document.getElementById("cashButton");
+    const generateReportButton = document.getElementById("generateReportButton");
+    const reportOutput = document.getElementById("reportOutput");
+    const transactionList = document.getElementById("transactionList");
+    const productsSold = [];
+    let cashAmount = 0;
+    let nonCashAmount = 0;
+
+    startShiftButton.addEventListener("click", function() {
+        fullName = fullNameInput.value.trim();
+        shiftDate = shiftDateInput.value.trim();
+        if (fullName === "" || shiftDate === "") {
+            alert("Please enter your full name and date.");
+            return;
+        }
+        startShiftForm.style.display = "none";
+        transactionForm.style.display = "block";
+    });
+
+    transferButton.addEventListener("click", function() {
+        const product = document.getElementById("product").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+        const quantity = parseInt(document.getElementById("quantity").value);
+
+        if (isNaN(amount) || isNaN(quantity)) {
+            alert("Please enter the amount and quantity correctly.");
+            return;
         }
 
-        header, main {
-            padding: 20px;
+        const totalAmount = amount * quantity;
+        nonCashAmount += totalAmount;
+
+        updateReport();
+        addTransaction(product, totalAmount);
+    });
+
+    cashButton.addEventListener("click", function() {
+        const product = prompt("Enter the product name:");
+        const amount = parseFloat(prompt("Enter the cash amount:"));
+        const quantity = parseInt(prompt("Enter the quantity:"));
+
+        if (isNaN(amount) || isNaN(quantity)) {
+            alert("Please enter the amount and quantity correctly.");
+            return;
         }
 
-        header {
-            background-color: #4CAF50;
-            color: white;
-        }
+        cashAmount += amount;
+        updateReport();
+        addTransaction(product, amount * quantity);
+    });
 
-        h1 {
-            margin: 0;
-        }
+    generateReportButton.addEventListener("click", function() {
+        fullNameInput.value = fullName;
+        shiftDateInput.value = shiftDate;
+    });
 
-        form {
-            margin-top: 20px;
-        }
+    function updateReport() {
+        const totalRevenue = cashAmount + nonCashAmount;
+        document.getElementById("cashAmount").textContent = `Cash amount: ${cashAmount}`;
+        document.getElementById("nonCashAmount").textContent = `Non-cash amount: ${nonCashAmount}`;
+        document.getElementById("totalRevenue").textContent = `Total revenue: ${totalRevenue}`;
+    }
 
-        input[type="text"], input[type="password"] {
-            width: calc(100% - 100px);
-            padding: 10px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #usersList, #chat {
-            margin-top: 20px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        #messages {
-            max-height: 200px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-        }
-
-        #messages div {
-            padding: 5px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .hidden {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Двор</h1>
-        <div id="authForms">
-            <form id="registerForm">
-                <h2>Регистрация</h2>
-                <input type="text" id="registerUsername" placeholder="Имя пользователя" required>
-                <input type="password" id="registerPassword" placeholder="Пароль" required>
-                <button type="submit">Регистрация</button>
-            </form>
-            <form id="loginForm" class="hidden">
-                <h2>Вход</h2>
-                <input type="text" id="loginUsername" placeholder="Имя пользователя" required>
-                <input type="password" id="loginPassword" placeholder="Пароль" required>
-                <button type="submit">Войти</button>
-            </form>
-        </div>
-        <form id="statusForm" class="hidden">
-            <label for="status">Я сейчас во дворе:</label>
-            <input type="checkbox" id="status" name="status">
-            <button type="submit">Отметиться</button>
-        </form>
-    </header>
-    
-    <main>
-        <section id="usersList" class="hidden">
-            <h2>Сейчас во дворе:</h2>
-            <ul id="users">
-                <!-- Здесь будут отображаться пользователи -->
-            </ul>
-        </section>
-
-        <section id="chat" class="hidden">
-            <h2>Чат</h2>
-            <div id="messages">
-                <!-- Здесь будут отображаться сообщения -->
-            </div>
-            <form id="messageForm">
-                <input type="text" id="messageInput" placeholder="Введите сообщение...">
-                <button type="submit">Отправить</button>
-            </form>
-        </section>
-    </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const registerForm = document.getElementById('registerForm');
-            const loginForm = document.getElementById('loginForm');
-            const statusForm = document.getElementById('statusForm');
-            const usersList = document.getElementById('users');
-            const chatForm = document.getElementById('messageForm');
-            const messagesContainer = document.getElementById('messages');
-            const authForms = document.getElementById('authForms');
-            const usersSection = document.getElementById('usersList');
-            const chatSection = document.getElementById('chat');
-
-            registerForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const username = document.getElementById('registerUsername').value;
-                const password = document.getElementById('registerPassword').value;
-                fetch('/api/register/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: username, password: password }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Регистрация успешна');
-                        registerForm.classList.add('hidden');
-                        loginForm.classList.remove('hidden');
-                    } else {
-                        alert('Ошибка регистрации: ' + data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            });
-
-            loginForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const username = document.getElementById('loginUsername').value;
-                const password = document.getElementById('loginPassword').value;
-                fetch('/api/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ username: username, password: password }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Вход успешен');
-                        loginForm.classList.add('hidden');
-                        authForms.classList.add('hidden');
-                        statusForm.classList.remove('hidden');
-                        usersSection.classList.remove('hidden');
-                        chatSection.classList.remove('hidden');
-                    } else {
-                        alert('Ошибка входа: ' + data.message);
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            });
-
-            statusForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const statusCheckbox = document.getElementById('status');
-                const isPresent = statusCheckbox.checked;
-                fetch('/api/status/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ status: isPresent }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            });
-
-            chatForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                const messageInput = document.getElementById('messageInput');
-                const messageText = messageInput.value;
-                fetch('/api/chat/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ message: messageText }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    messageInput.value = '';
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            });
-
-            function updateUsersList(users) {
-                usersList.innerHTML = '';
-                users.forEach(function(user) {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = user.name;
-                    usersList.appendChild(listItem);
-                });
-            }
-
-            function updateChat(messages) {
-                messagesContainer.innerHTML = '';
-                messages.forEach(function(message) {
-                    const messageElement = document.createElement('div');
-                    messageElement.textContent = `${message.sender}: ${message.text}`;
-                    messagesContainer.appendChild(messageElement);
-                });
-            }
-
-            // Здесь добавьте код для получения данных от сервера и обновления пользователей и чата
-            // Например:
-            // fetch('/api/users/')
-            // .then(response => response.json())
-            // .then(data => updateUsersList(data.users));
-
-            // fetch('/api/messages/')
-            // .then(response => response.json())
-            // .then(data => updateChat(data.messages));
-        });
-    </script>
-</body>
-</html>
+    function addTransaction(product, amount) {
+        productsSold.push({ product, amount });
+        const listItem = document.createElement("li");
+        listItem.textContent = `${product}: ${amount}`;
+        transactionList.appendChild(listItem);
+    }
+});
