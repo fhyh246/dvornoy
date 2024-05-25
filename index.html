@@ -29,7 +29,7 @@
             margin-top: 20px;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             width: calc(100% - 100px);
             padding: 10px;
             margin-right: 10px;
@@ -68,12 +68,30 @@
             padding: 5px 0;
             border-bottom: 1px solid #f0f0f0;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Двор</h1>
-        <form id="statusForm">
+        <div id="authForms">
+            <form id="registerForm">
+                <h2>Регистрация</h2>
+                <input type="text" id="registerUsername" placeholder="Имя пользователя" required>
+                <input type="password" id="registerPassword" placeholder="Пароль" required>
+                <button type="submit">Регистрация</button>
+            </form>
+            <form id="loginForm" class="hidden">
+                <h2>Вход</h2>
+                <input type="text" id="loginUsername" placeholder="Имя пользователя" required>
+                <input type="password" id="loginPassword" placeholder="Пароль" required>
+                <button type="submit">Войти</button>
+            </form>
+        </div>
+        <form id="statusForm" class="hidden">
             <label for="status">Я сейчас во дворе:</label>
             <input type="checkbox" id="status" name="status">
             <button type="submit">Отметиться</button>
@@ -81,14 +99,14 @@
     </header>
     
     <main>
-        <section id="usersList">
+        <section id="usersList" class="hidden">
             <h2>Сейчас во дворе:</h2>
             <ul id="users">
                 <!-- Здесь будут отображаться пользователи -->
             </ul>
         </section>
 
-        <section id="chat">
+        <section id="chat" class="hidden">
             <h2>Чат</h2>
             <div id="messages">
                 <!-- Здесь будут отображаться сообщения -->
@@ -102,10 +120,70 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('registerForm');
+            const loginForm = document.getElementById('loginForm');
             const statusForm = document.getElementById('statusForm');
             const usersList = document.getElementById('users');
             const chatForm = document.getElementById('messageForm');
             const messagesContainer = document.getElementById('messages');
+            const authForms = document.getElementById('authForms');
+            const usersSection = document.getElementById('usersList');
+            const chatSection = document.getElementById('chat');
+
+            registerForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const username = document.getElementById('registerUsername').value;
+                const password = document.getElementById('registerPassword').value;
+                fetch('/api/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: username, password: password }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Регистрация успешна');
+                        registerForm.classList.add('hidden');
+                        loginForm.classList.remove('hidden');
+                    } else {
+                        alert('Ошибка регистрации: ' + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            });
+
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const username = document.getElementById('loginUsername').value;
+                const password = document.getElementById('loginPassword').value;
+                fetch('/api/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: username, password: password }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Вход успешен');
+                        loginForm.classList.add('hidden');
+                        authForms.classList.add('hidden');
+                        statusForm.classList.remove('hidden');
+                        usersSection.classList.remove('hidden');
+                        chatSection.classList.remove('hidden');
+                    } else {
+                        alert('Ошибка входа: ' + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            });
 
             statusForm.addEventListener('submit', function(event) {
                 event.preventDefault();
