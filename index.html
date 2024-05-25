@@ -5,14 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отчет</title>
 <style>
-  body {
+body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #000;
     color: #FFD700;
-  }
-  button {
+}
+
+button {
     padding: 15px 30px;
     margin: 10px;
     font-size: 18px;
@@ -22,14 +23,18 @@
     border: none;
     border-radius: 25px;
     transition: transform 0.2s, background-color 0.2s;
-  }
-  button:hover {
+}
+
+button:hover {
     background-color: #FFC700;
-  }
-  button:active {
+}
+
+button:active {
     transform: scale(0.95);
-  }
-  input[type="text"], input[type="number"] {
+}
+
+input[type="text"],
+input[type="number"] {
     padding: 8px;
     margin: 10px;
     font-size: 16px;
@@ -40,167 +45,174 @@
     background-color: #000;
     color: #FFD700;
     transition: border-color 0.2s;
-  }
-  input[type="text"]:focus, input[type="number"]:focus {
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
     border-color: #FFC700;
-  }
-  #reportSection {
+}
+
+#reportSection {
     margin: 20px;
     opacity: 0;
     transition: opacity 0.5s;
-  }
-  h3 {
+}
+
+h3 {
     margin-top: 20px;
     color: #FFD700;
-  }
-  ul {
+}
+
+ul {
     list-style-type: none;
     padding: 0;
     margin: 0;
-  }
-  li {
+}
+
+li {
     margin-bottom: 10px;
     color: #FFD700;
-  }
-  .center {
+}
+
+.center {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  @media (max-width: 600px) {
-    button, input[type="text"], input[type="number"] {
-      font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    button,
+    input[type="text"],
+    input[type="number"] {
+        font-size: 14px;
     }
-  }
-  #reportInput {
+}
+
+#reportInput {
     display: none;
     opacity: 0;
     transition: opacity 0.5s;
-  }
-  #mainScreen {
+}
+
+#mainScreen {
     display: none;
     opacity: 0;
     transition: opacity 0.5s;
-  }
+}
+
+#listButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
 </style>
 </head>
 <body>
-
 <div class="center">
-  <button id="openShiftBtn" onclick="openShift()">Открыть смену</button>
+    <button id="openShiftBtn" onclick="openShift()">Открыть смену</button>
 </div>
-
 <div id="mainScreen">
-  <div class="center">
-    <button onclick="showReportInput('cash')">Касса</button>
-    <button onclick="showReportInput('nonCash')">Не касса</button>
-  </div>
-  
-  <div id="reportSection">
-    <input type="text" id="dopZP" placeholder="ДОП-ЗП">
-    <input type="text" id="inkassation" placeholder="Инкассация">
-    <div id="cashReport">
-      <h3>Отчет по кассе</h3>
-      <ul id="cashReportList"></ul>
+    <div class="center">
+        <button onclick="showReportInput('cash')">Касса</button>
+        <button onclick="showReportInput('nonCash')">Не касса</button>
     </div>
-    <div id="nonCashReport">
-      <h3>Отчет не по кассе</h3>
-      <ul id="nonCashReportList"></ul>
+    <div id="reportSection">
+        <input type="text" id="dopZP" placeholder="ДОП-ЗП">
+        <input type="text" id="inkassation" placeholder="Инкассация">
+        <div id="cashReport">
+            <h3>Отчет по кассе</h3>
+            <ul id="cashReportList"></ul>
+        </div>
+        <div id="nonCashReport">
+            <h3>Отчет не по кассе</h3>
+            <ul id="nonCashReportList"></ul>
+        </div>
     </div>
-  </div>
-  
-  <div class="center">
-    <button onclick="closeShift()">Закрыть смену</button>
-  </div>
+    <div class="center">
+        <button onclick="closeShift()">Закрыть смену</button>
+    </div>
 </div>
-
 <div id="reportInput">
-  <h3 id="reportTypeTitle"></h3>
-  <input type="text" id="productName" placeholder="Название товара">
-  <input type="number" id="quantity" placeholder="Количество">
-  <input type="number" id="price" placeholder="Цена">
-  <div class="center">
-    <button onclick="addProduct('наличные')">НАЛ</button>
-    <button onclick="addProduct('безналичные')">БЕЗ НАЛ</button>
-  </div>
+    <h3 id="reportTypeTitle"></h3>
+    <input type="text" id="productName" placeholder="Название товара">
+    <input type="number" id="quantity" placeholder="Количество">
+    <input type="number" id="price" placeholder="Цена">
+    <div class="center">
+        <button onclick="addProduct('наличные')">НАЛ</button>
+        <button onclick="addProduct('безналичные')">БЕЗ НАЛ</button>
+    </div>
 </div>
-
+<button id="listButton" onclick="showList()">Список</button>
 <script>
-  var shop, fio, date, salary;
-  var currentReportType;
+var shop, fio, date, salary;
+var currentReportType;
 
-  function openShift() {
+function openShift() {
     shop = prompt("Введите магазин:");
     fio = prompt("Введите ФИО:");
     date = prompt("Введите дату:");
     salary = prompt("Введите зарплату:");
     document.getElementById("mainScreen").style.display = "block";
     setTimeout(() => {
-      document.getElementById("mainScreen").style.opacity = 1;
+        document.getElementById("mainScreen").style.opacity = 1
     }, 10);
     document.getElementById("openShiftBtn").style.display = "none";
-  }
+}
 
-  function showReportInput(reportType) {
+function showReportInput(reportType) {
     currentReportType = reportType;
     var title = reportType === 'cash' ? 'Отчет по кассе' : 'Не по кассе';
     document.getElementById("reportTypeTitle").textContent = title;
     document.getElementById("reportInput").style.display = "block";
     setTimeout(() => {
-      document.getElementById("reportInput").style.opacity = 1;
+        document.getElementById("reportInput").style.opacity = 1
     }, 10);
-  }
+}
 
-  function addProduct(paymentMethod) {
+function addProduct(paymentMethod) {
     var productName = document.getElementById("productName").value;
     var quantity = parseInt(document.getElementById("quantity").value);
     var price = parseFloat(document.getElementById("price").value);
     var total = quantity * price;
     var listItem = document.createElement("li");
     listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
-
     if (currentReportType === 'cash') {
-      var reportList = document.getElementById("cashReportList");
-      reportList.appendChild(listItem);
+        var reportList = document.getElementById("cashReportList");
+        reportList.appendChild(listItem);
     } else {
-      var reportList = document.getElementById("nonCashReportList");
-      reportList.appendChild(listItem);
-      document.getElementById("nonCashReport").style.display = "block";
+        var reportList = document.getElementById("nonCashReportList");
+        reportList.appendChild(listItem);
+        document.getElementById("nonCashReport").style.display = "block";
     }
-
     document.getElementById("reportInput").style.display = "none";
     document.getElementById("productName").value = '';
     document.getElementById("quantity").value = '';
     document.getElementById("price").value = '';
-  }
+}
 
-  function closeShift() {
+function closeShift() {
     var dopZP = document.getElementById("dopZP").value || "0";
     var inkassation = document.getElementById("inkassation").value || "0";
     var cashReportItems = document.getElementById("cashReportList").getElementsByTagName("li");
     var nonCashReportItems = document.getElementById("nonCashReportList").getElementsByTagName("li");
     var totalCash = 0;
     var totalNonCash = 0;
-
     for (var i = 0; i < cashReportItems.length; i++) {
-      var itemText = cashReportItems[i].textContent;
-      var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
-      if (itemText.includes("наличные")) {
-        totalCash += amount;
-      }
+        var itemText = cashReportItems[i].textContent;
+        var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
+        if (itemText.includes("наличные")) {
+            totalCash += amount;
+        }
     }
-
     for (var j = 0; j < nonCashReportItems.length; j++) {
-      var itemText = nonCashReportItems[j].textContent;
-      var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
-      if (itemText.includes("наличные")) {
-        totalNonCash += amount;
-      }
+        var itemText = nonCashReportItems[j].textContent;
+        var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
+        if (itemText.includes("наличные")) {
+            totalNonCash += amount;
+        }
     }
-
     var totalRevenue = totalCash + totalNonCash;
-    var totalCashReport = `
-❗️Магазин: ${shop}
+    var totalCashReport = `❗️Магазин: ${shop}
 ФИО: ${fio}
 Дата: ${date}
 
@@ -229,10 +241,22 @@
 Общая выручка смены: ${totalRevenue.toFixed(2)}
 Сдано в общем: ${(totalCash + totalNonCash).toFixed(2)}
 `;
-
     alert(totalCashReport);
-  }
-</script>
+}
 
+function showList() {
+    var cashReportItems = document.getElementById("cashReportList").getElementsByTagName("li");
+    var nonCashReportItems = document.getElementById("nonCashReportList").getElementsByTagName("li");
+    var listContent = "Список товаров по кассе:\n";
+    for (var i = 0; i < cashReportItems.length; i++) {
+        listContent += cashReportItems[i].textContent + "\n";
+    }
+    listContent += "\nСписок товаров не по кассе:\n";
+    for (var j = 0; j < nonCashReportItems.length; j++) {
+        listContent += nonCashReportItems[j].textContent + "\n";
+    }
+    alert(listContent);
+}
+</script>
 </body>
 </html>
