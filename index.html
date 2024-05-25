@@ -39,7 +39,86 @@
         </div>
     </div>
     <script>
-        // Вставьте сюда скопированный JavaScript код
+    document.addEventListener("DOMContentLoaded", function() {
+    let fullName = "";
+    let shiftDate = "";
+
+    const startShiftForm = document.getElementById("startShiftForm");
+    const transactionForm = document.getElementById("transactionForm");
+    const fullNameInput = document.getElementById("fullName");
+    const shiftDateInput = document.getElementById("shiftDate");
+    const startShiftButton = document.getElementById("startShiftButton");
+    const transferButton = document.getElementById("transferButton");
+    const cashButton = document.getElementById("cashButton");
+    const generateReportButton = document.getElementById("generateReportButton");
+    const reportOutput = document.getElementById("reportOutput");
+    const transactionList = document.getElementById("transactionList");
+    const productsSold = [];
+    let cashAmount = 0;
+    let nonCashAmount = 0;
+
+    startShiftButton.addEventListener("click", function() {
+        fullName = fullNameInput.value.trim();
+        shiftDate = shiftDateInput.value.trim();
+        if (fullName === "" || shiftDate === "") {
+            alert("Please enter your full name and date.");
+            return;
+        }
+        startShiftForm.style.display = "none";
+        transactionForm.style.display = "block";
+    });
+
+    transferButton.addEventListener("click", function() {
+        const product = document.getElementById("product").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+        const quantity = parseInt(document.getElementById("quantity").value);
+
+        if (isNaN(amount) || isNaN(quantity)) {
+            alert("Please enter the amount and quantity correctly.");
+            return;
+        }
+
+        const totalAmount = amount * quantity;
+        nonCashAmount += totalAmount;
+
+        updateReport();
+        addTransaction(product, totalAmount);
+    });
+
+    cashButton.addEventListener("click", function() {
+        const product = prompt("Enter the product name:");
+        const amount = parseFloat(prompt("Enter the cash amount:"));
+        const quantity = parseInt(prompt("Enter the quantity:"));
+
+        if (isNaN(amount) || isNaN(quantity)) {
+            alert("Please enter the amount and quantity correctly.");
+            return;
+        }
+
+        cashAmount += amount;
+        updateReport();
+        addTransaction(product, amount * quantity);
+    });
+
+    generateReportButton.addEventListener("click", function() {
+        fullNameInput.value = fullName;
+        shiftDateInput.value = shiftDate;
+    });
+
+    function updateReport() {
+        const totalRevenue = cashAmount + nonCashAmount;
+        document.getElementById("cashAmount").textContent = `Cash amount: ${cashAmount}`;
+        document.getElementById("nonCashAmount").textContent = `Non-cash amount: ${nonCashAmount}`;
+        document.getElementById("totalRevenue").textContent = `Total revenue: ${totalRevenue}`;
+    }
+
+    function addTransaction(product, amount) {
+        productsSold.push({ product, amount });
+        const listItem = document.createElement("li");
+        listItem.textContent = `${product}: ${amount}`;
+        transactionList.appendChild(listItem);
+    }
+});
     </script>
 </body>
 </html>
