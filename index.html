@@ -4,10 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Отчет</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  input[type="text"] {
+    padding: 8px;
+    margin: 10px;
+    font-size: 16px;
+  }
+  #reportSection {
+    margin: 20px;
+  }
+  h3 {
+    margin-top: 20px;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    margin-bottom: 10px;
+  }
+</style>
 </head>
 <body>
 
-<button onclick="openShift()">Открыть смену</button>
+<button id="openShiftBtn" onclick="openShift()">Открыть смену</button>
 
 <div id="mainScreen" style="display: none;">
   <div>
@@ -17,7 +49,6 @@
   
   <div id="reportSection">
     <input type="text" id="dopZP" placeholder="ДОП-ЗП">
-    <button onclick="generateReport('Отчет по кассе')">Формировать отчет</button>
     <input type="text" id="inkassation" placeholder="Инкассация">
     <button onclick="closeShift()">Закрыть смену</button>
     <div id="cashReport">
@@ -32,60 +63,89 @@
 </div>
 
 <script>
+  var shop, fio, date, salary;
+
   function openShift() {
-    var shop = prompt("Введите магазин:");
-    var fio = prompt("Введите ФИО:");
-    var date = prompt("Введите дату:");
-    var salary = prompt("Введите зарплату:");
-    // Дополнительная логика для открытия смены
+    shop = prompt("Введите магазин:");
+    fio = prompt("Введите ФИО:");
+    date = prompt("Введите дату:");
+    salary = prompt("Введите зарплату:");
     document.getElementById("mainScreen").style.display = "block";
+    document.getElementById("openShiftBtn").style.display = "none";
   }
 
   function generateReport(reportType) {
+    var productName = prompt("Введите название товара:");
+    var quantity = parseInt(prompt("Введите количество товара:"));
+    var price = parseFloat(prompt("Введите цену товара:"));
+    var paymentMethod = prompt("Выберите метод оплаты (наличные/безналичные):");
+    var total = quantity * price;
+    var listItem = document.createElement("li");
+    listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
+
     if (reportType === 'Отчет по кассе') {
-      var productName = prompt("Введите название товара:");
-      var quantity = parseInt(prompt("Введите количество товара:"));
-      var price = parseFloat(prompt("Введите цену товара:"));
-      var paymentMethod = prompt("Выберите метод оплаты (наличные/безналичные):");
-      var total = quantity * price;
       var reportList = document.getElementById("cashReportList");
-      var listItem = document.createElement("li");
-      listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
       reportList.appendChild(listItem);
     } else {
-      var productName = prompt("Введите название товара:");
-      var quantity = parseInt(prompt("Введите количество товара:"));
-      var price = parseFloat(prompt("Введите цену товара:"));
-      var paymentMethod = prompt("Выберите метод оплаты (наличные/безналичные):");
-      var total = quantity * price;
       var reportList = document.getElementById("nonCashReportList");
-      var listItem = document.createElement("li");
-      listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
       reportList.appendChild(listItem);
       document.getElementById("nonCashReport").style.display = "block";
     }
   }
 
   function closeShift() {
-    var inkassation = prompt("Введите инкассацию:");
+    var dopZP = document.getElementById("dopZP").value || "0";
+    var inkassation = document.getElementById("inkassation").value || "0";
     var cashReportItems = document.getElementById("cashReportList").getElementsByTagName("li");
     var nonCashReportItems = document.getElementById("nonCashReportList").getElementsByTagName("li");
     var totalCash = 0;
     var totalNonCash = 0;
+
     for (var i = 0; i < cashReportItems.length; i++) {
       var itemText = cashReportItems[i].textContent;
       var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
       totalCash += amount;
     }
+
     for (var j = 0; j < nonCashReportItems.length; j++) {
       var itemText = nonCashReportItems[j].textContent;
       var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
       totalNonCash += amount;
     }
+
     var totalRevenue = totalCash + totalNonCash;
-    var totalCashReport = "Наличные: " + totalCash.toFixed(2) + " руб., Безналичные: " + totalNonCash.toFixed(2) + " руб., Общая выручка смены: " + totalRevenue.toFixed(2) + " руб., Инкассация: " + inkassation + " руб.";
+    var totalCashReport = `
+❗️Магазин: ${shop}
+ФИО: ${fio}
+Дата: ${date}
+
+Зп: ${salary}
+Доп. зп: ${dopZP}
+
+Отчет по кассе:
+Нал: ${totalCash.toFixed(2)}
+Бн: 0
+Общая: ${totalCash.toFixed(2)}
+Скидки: -
+Браки: -
+Списания: -
+Сдано: ${totalCash.toFixed(2)}
+
+❗️Не по кассе:
+Нал: ${totalNonCash.toFixed(2)}
+Бн: 0
+Общая: ${totalNonCash.toFixed(2)}
+Скидки: -
+Браки: -
+Списание: -
+Сдано: ${totalNonCash.toFixed(2)}
+
+Инкассация: ${inkassation}
+Общая выручка смены: ${totalRevenue.toFixed(2)}
+Сдано в общем: ${totalCash.toFixed(2) + totalNonCash.toFixed(2)}
+`;
+
     alert(totalCashReport);
-    // Дополнительная логика для закрытия смены
   }
 </script>
 
