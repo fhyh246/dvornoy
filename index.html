@@ -1,80 +1,45 @@
-document.addEventListener("DOMContentLoaded", function() {
-    let fullName = "";
-    let shiftDate = "";
-
-    const startShiftForm = document.getElementById("startShiftForm");
-    const transactionForm = document.getElementById("transactionForm");
-    const fullNameInput = document.getElementById("fullName");
-    const shiftDateInput = document.getElementById("shiftDate");
-    const startShiftButton = document.getElementById("startShiftButton");
-    const transferButton = document.getElementById("transferButton");
-    const cashButton = document.getElementById("cashButton");
-    const generateReportButton = document.getElementById("generateReportButton");
-    const reportOutput = document.getElementById("reportOutput");
-    const transactionList = document.getElementById("transactionList");
-    const productsSold = [];
-    let cashAmount = 0;
-    let nonCashAmount = 0;
-
-    startShiftButton.addEventListener("click", function() {
-        fullName = fullNameInput.value.trim();
-        shiftDate = shiftDateInput.value.trim();
-        if (fullName === "" || shiftDate === "") {
-            alert("Please enter your full name and date.");
-            return;
-        }
-        startShiftForm.style.display = "none";
-        transactionForm.style.display = "block";
-    });
-
-    transferButton.addEventListener("click", function() {
-        const product = document.getElementById("product").value;
-        const amount = parseFloat(document.getElementById("amount").value);
-        const quantity = parseInt(document.getElementById("quantity").value);
-
-        if (isNaN(amount) || isNaN(quantity)) {
-            alert("Please enter the amount and quantity correctly.");
-            return;
-        }
-
-        const totalAmount = amount * quantity;
-        nonCashAmount += totalAmount;
-
-        updateReport();
-        addTransaction(product, totalAmount);
-    });
-
-    cashButton.addEventListener("click", function() {
-        const product = prompt("Enter the product name:");
-        const amount = parseFloat(prompt("Enter the cash amount:"));
-        const quantity = parseInt(prompt("Enter the quantity:"));
-
-        if (isNaN(amount) || isNaN(quantity)) {
-            alert("Please enter the amount and quantity correctly.");
-            return;
-        }
-
-        cashAmount += amount;
-        updateReport();
-        addTransaction(product, amount * quantity);
-    });
-
-    generateReportButton.addEventListener("click", function() {
-        fullNameInput.value = fullName;
-        shiftDateInput.value = shiftDate;
-    });
-
-    function updateReport() {
-        const totalRevenue = cashAmount + nonCashAmount;
-        document.getElementById("cashAmount").textContent = `Cash amount: ${cashAmount}`;
-        document.getElementById("nonCashAmount").textContent = `Non-cash amount: ${nonCashAmount}`;
-        document.getElementById("totalRevenue").textContent = `Total revenue: ${totalRevenue}`;
-    }
-
-    function addTransaction(product, amount) {
-        productsSold.push({ product, amount });
-        const listItem = document.createElement("li");
-        listItem.textContent = `${product}: ${amount}`;
-        transactionList.appendChild(listItem);
-    }
-});
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор отчета по кассе</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Генератор отчета по кассе</h1>
+        <div id="startShiftForm">
+            <label for="fullName">ФИО:</label>
+            <input type="text" id="fullName" placeholder="Введите ФИО"><br>
+            <label for="shiftDate">Дата:</label>
+            <input type="date" id="shiftDate"><br>
+            <button id="startShiftButton">Открыть смену</button>
+        </div>
+        <div id="transactionForm" style="display:none;">
+            <label for="product">Товар:</label>
+            <input type="text" id="product"><br>
+            <label for="amount">Сумма:</label>
+            <input type="number" id="amount"><br>
+            <label for="quantity">Количество:</label>
+            <input type="number" id="quantity"><br>
+            <button id="transferButton">Перевод</button>
+            <button id="cashButton">Наличные</button>
+            <button id="generateReportButton">Формировать отчет</button>
+        </div>
+        <div id="reportOutput">
+            <h2>Отчет по кассе:</h2>
+            <p id="cashAmount">Сумма наличных: 0</p>
+            <p id="nonCashAmount">Сумма безналичных: 0</p>
+            <p id="totalRevenue">Общая выручка: 0</p>
+            <div id="transactions">
+                <h2>Транзакции:</h2>
+                <ul id="transactionList"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Вставьте сюда скопированный JavaScript код
+    </script>
+</body>
+</html>
