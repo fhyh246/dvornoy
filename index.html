@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Двор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header, main {
+            padding: 20px;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #usersList, #chat {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        #messages {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        #messages div {
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Двор</h1>
+        <form id="statusForm">
+            <label for="status">Я сейчас во дворе:</label>
+            <input type="checkbox" id="status" name="status">
+            <button type="submit">Отметиться</button>
+        </form>
+    </header>
+    
+    <main>
+        <section id="usersList">
+            <h2>Сейчас во дворе:</h2>
+            <ul id="users">
+                <!-- Здесь будут отображаться пользователи -->
+            </ul>
+        </section>
+
+        <section id="chat">
+            <h2>Чат</h2>
+            <div id="messages">
+                <!-- Здесь будут отображаться сообщения -->
+            </div>
+            <form id="messageForm">
+                <input type="text" id="messageInput" placeholder="Введите сообщение...">
+                <button type="submit">Отправить</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusForm = document.getElementById('statusForm');
+            const usersList = document.getElementById('users');
+            const chatForm = document.getElementById('messageForm');
+            const messagesContainer = document.getElementById('messages');
+
+            statusForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const statusCheckbox = document.getElementById('status');
+                const isPresent = statusCheckbox.checked;
+                fetch('/api/status/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: isPresent }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            });
+
+            chatForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const messageInput = document.getElementById('messageInput');
+                const messageText = messageInput.value;
+                fetch('/api/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: messageText }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    messageInput.value = '';
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            });
+
+            function updateUsersList(users) {
+                usersList.innerHTML = '';
+                users.forEach(function(user) {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = user.name;
+                    usersList.appendChild(listItem);
+                });
+            }
+
+            function updateChat(messages) {
+                messagesContainer.innerHTML = '';
+                messages.forEach(function(message) {
+                    const messageElement = document.createElement('div');
+                    messageElement.textContent = `${message.sender}: ${message.text}`;
+                    messagesContainer.appendChild(messageElement);
+                });
+            }
+
+            // Здесь добавьте код для получения данных от сервера и обновления пользователей и чата
+            // Например:
+            // fetch('/api/users/')
+            // .then(response => response.json())
+            // .then(data => updateUsersList(data.users));
+
+            // fetch('/api/messages/')
+            // .then(response => response.json())
+            // .then(data => updateChat(data.messages));
+        });
+    </script>
+</body>
+</html>
