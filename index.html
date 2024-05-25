@@ -53,13 +53,39 @@
       listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
       reportList.appendChild(listItem);
     } else {
-      // Логика для отчета не по кассе
+      var productName = prompt("Введите название товара:");
+      var quantity = parseInt(prompt("Введите количество товара:"));
+      var price = parseFloat(prompt("Введите цену товара:"));
+      var paymentMethod = prompt("Выберите метод оплаты (наличные/безналичные):");
+      var total = quantity * price;
+      var reportList = document.getElementById("nonCashReportList");
+      var listItem = document.createElement("li");
+      listItem.textContent = productName + " - " + quantity + " шт. - " + total.toFixed(2) + " руб. (" + paymentMethod + ")";
+      reportList.appendChild(listItem);
+      document.getElementById("nonCashReport").style.display = "block";
     }
   }
 
   function closeShift() {
     var inkassation = prompt("Введите инкассацию:");
-    // Логика закрытия смены
+    var cashReportItems = document.getElementById("cashReportList").getElementsByTagName("li");
+    var nonCashReportItems = document.getElementById("nonCashReportList").getElementsByTagName("li");
+    var totalCash = 0;
+    var totalNonCash = 0;
+    for (var i = 0; i < cashReportItems.length; i++) {
+      var itemText = cashReportItems[i].textContent;
+      var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
+      totalCash += amount;
+    }
+    for (var j = 0; j < nonCashReportItems.length; j++) {
+      var itemText = nonCashReportItems[j].textContent;
+      var amount = parseFloat(itemText.split(" - ")[2].split(" ")[0]);
+      totalNonCash += amount;
+    }
+    var totalRevenue = totalCash + totalNonCash;
+    var totalCashReport = "Наличные: " + totalCash.toFixed(2) + " руб., Безналичные: " + totalNonCash.toFixed(2) + " руб., Общая выручка смены: " + totalRevenue.toFixed(2) + " руб., Инкассация: " + inkassation + " руб.";
+    alert(totalCashReport);
+    // Дополнительная логика для закрытия смены
   }
 </script>
 
