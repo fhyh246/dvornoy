@@ -1,0 +1,25 @@
+function loadFinesFromGitHub() {
+    const url = 'https://raw.githubusercontent.com/your-username/your-repository/main/fines.json';
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Отобразить штрафы на странице
+            data.forEach(fine => renderFine(fine));
+        })
+        .catch(error => console.error('Ошибка загрузки данных о штрафах:', error));
+}
+
+// Вызываем функцию загрузки данных при загрузке страницы или других событиях
+document.addEventListener('DOMContentLoaded', function() {
+    loadFinesFromGitHub();
+});
+
+// Функция для отображения штрафа
+function renderFine(fine) {
+    const fineEntry = document.createElement('div');
+    fineEntry.className = 'fine-entry';
+    fineEntry.textContent = `Фамилия Имя: ${fine.name}, Дата: ${fine.date}, Причина: ${fine.reason}, Сумма: ${fine.amount}`;
+
+    document.getElementById('fines-container').appendChild(fineEntry);
+}
