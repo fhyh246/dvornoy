@@ -61,27 +61,18 @@
             <input type="password" id="secret-code" placeholder="Введите секретный код">
             <button onclick="authorize()">Авторизоваться</button>
             <p id="auth-message"></p>
-            <button onclick="toggleFinesList()">Посмотреть штрафы</button>
         </div>
         <div id="app-section" class="hidden">
-            <h2>Добавить штраф</h2>
-            <form id="fine-form">
-                <input type="text" id="name" name="name" placeholder="Фамилия Имя" required><br>
-                <input type="date" id="date" name="date" required><br>
-                <input type="text" id="reason" name="reason" placeholder="Причина" required><br>
-                <input type="number" id="amount" name="amount" placeholder="Сумма" required><br>
-                <button type="button" onclick="addFine()">Добавить штраф</button>
-            </form>
-        </div>
-        <div id="fines-list" class="hidden">
-            <h2>Список штрафов</h2>
-            <div id="fines-container"></div>
+            <h2>Меню штрафов</h2>
+            <button onclick="toggleFinesList()">Посмотреть штрафы</button>
+            <div id="fines-list" class="hidden">
+                <h2>Список штрафов</h2>
+                <div id="fines-container"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        let authorized = false;
-
         function authorize() {
             const secretCode = document.getElementById('secret-code').value;
             const authMessage = document.getElementById('auth-message');
@@ -89,24 +80,16 @@
                 document.getElementById('auth-section').classList.add('hidden');
                 document.getElementById('app-section').classList.remove('hidden');
                 authMessage.textContent = '';
-                authorized = true;
                 loadFines();
             } else {
                 authMessage.textContent = 'Неправильный код!';
             }
         }
 
-        function addFine() {
-            const name = document.getElementById('name').value;
-            const date = document.getElementById('date').value;
-            const reason = document.getElementById('reason').value;
-            const amount = document.getElementById('amount').value;
-
+        function addFine(name, date, reason, amount) {
             const fine = { name, date, reason, amount };
             saveFine(fine);
             renderFine(fine);
-
-            document.getElementById('fine-form').reset();
         }
 
         function saveFine(fine) {
@@ -124,29 +107,8 @@
             const fineEntry = document.createElement('div');
             fineEntry.className = 'fine-entry';
             fineEntry.textContent = `Фамилия Имя: ${fine.name}, Дата: ${fine.date}, Причина: ${fine.reason}, Сумма: ${fine.amount}`;
-            fineEntry.appendChild(createDeleteButton(fineEntry, fine));
 
             document.getElementById('fines-container').appendChild(fineEntry);
-        }
-
-        function createDeleteButton(fineEntry, fine) {
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Удалить';
-            deleteButton.onclick = function() {
-                if (authorized) {
-                    fineEntry.remove();
-                    removeFine(fine);
-                } else {
-                    alert('Вы не авторизованы для удаления штрафов.');
-                }
-            };
-            return deleteButton;
-        }
-
-        function removeFine(fine) {
-            let fines = getFines();
-            fines = fines.filter(f => !(f.name === fine.name && f.date === fine.date && f.reason === fine.reason && f.amount === fine.amount));
-            localStorage.setItem('fines', JSON.stringify(fines));
         }
 
         function loadFines() {
